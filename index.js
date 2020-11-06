@@ -148,7 +148,22 @@ function main(){
     var dates = [];
     
     var date_now = new Date();
-    var date_seed = new Date("2012-01-01");
+    
+    //
+    // 2020-11-06 Addition:
+    // Popular request, make it so the user can customize their start date
+    //
+    //
+    var date_seed = "";
+    
+    //
+    // Loop until the user provides a valid(ish) date
+    //
+    while(!/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(date_seed)){
+        date_seed = prompt("START DATE","2012-01-01");
+    }
+    
+    var date_seed = new Date(date_seed);
     var date_next = new Date(Math.min(date_now, new Date(date_seed.getFullYear(), date_seed.getMonth(), date_seed.getDate() + 10), date_now));
         
 
