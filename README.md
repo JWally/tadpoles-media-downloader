@@ -7,7 +7,9 @@ Quick script I wrote to download all pictures and videos out of tadpoles. To use
 
 1.) Copy the following string of text:
 
+```
 javascript:var js = document.createElement('script');js.src = 'https://jwally.github.io/tadpoles-media-downloader/index.js';document.querySelectorAll('head')[0].appendChild(js)
+```
 
 2.) Open google chrome (might work with other browsers, but not really tested)
 
@@ -19,7 +21,9 @@ javascript:
 
 5.) Paste the text you copied earlier so your address bar now looks like this:
 
+```
 javascript:var js = document.createElement('script');js.src = '//bit.ly/36doNsE';document.querySelectorAll('head')[0].appendChild(js)
+```
 
 6.) Hit ENTER
 
