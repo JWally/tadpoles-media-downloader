@@ -48,19 +48,19 @@ document.all_media = [];
 // This functino takes 2 dates and spits out a decent looking URL.
 // No data validation, so be careful...
 //
-function url_maker(start_date, stop_date){
-    
+function url_maker(start_date, stop_date) {
+
     //
     // Step 1: Convert dates to epoch / 1000
     //
     start_date = Math.floor(new Date(start_date).getTime() / 1000);
     stop_date = Math.floor(new Date(stop_date).getTime() / 1000);
- 
+
 
     //
     // Step 2: Spit out our data URL for the given time frame
     //
- 
+
     return `https://www.tadpoles.com/remote/v1/events?direction=range&earliest_event_time=${start_date}&latest_event_time=${stop_date}&num_events=300&client=dashboard`;
 }
 
@@ -73,25 +73,25 @@ function url_maker(start_date, stop_date){
 // for a given date range
 //
 //
-function get_data(start_date, end_date){
-    
+function get_data(start_date, end_date) {
+
     //
     // Return the promise that fetch returns...
     //
-    return async function get_data(){
-        
+    return async function get_data() {
+
         //
         // Use previously defined url_maker function to generate the url we're going to use
         // to pull out our data JSON
         //
         let url = url_maker(start_date, end_date);
-        
+
 
         //
         //
         //
         return fetch(url)
-            .then(function(response){
+            .then(function (response) {
                 var json = response.json();
                 console.log(json);
                 return json;
@@ -111,16 +111,16 @@ function get_data(start_date, end_date){
 // S
 //
 //
-async function get_media(key, attachment){
-    
+async function get_media(key, attachment) {
+
     let url = `https://www.tadpoles.com/remote/v1/obj_attachment?obj=${key}&key=${attachment}&download=true`;
 
     var link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", "WHOA");
     link.click();
-    
-    return new Promise((res, rej) => {res(true)})
+
+    return new Promise((res, rej) => { res(true) })
 
 }
 
@@ -137,8 +137,8 @@ async function get_media(key, attachment){
 //
 // /////////////////////////////////////////////////////////////////////////////////////
 // -------------------------------------------------------------------------------------
-function main(){
-    
+function main() {
+
     //
     // STEP 1.) Build an array of dates to scrape from starting 1/1/12 in 10 day increments.
     // --------------------------------------------------------------------------------------
@@ -146,37 +146,37 @@ function main(){
     //
     //
     var dates = [];
-    
+
     var date_now = new Date();
-    
+
     //
     // 2020-11-06 Addition:
     // Popular request, make it so the user can customize their start date
     //
     //
     var date_seed = "";
-    
+
     //
     // Loop until the user provides a valid(ish) date
     //
-    while(!/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(date_seed)){
-        date_seed = prompt("START DATE","2012-01-01");
+    while (!/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(date_seed)) {
+        date_seed = prompt("START DATE", "2012-01-01");
     }
-    
+
     var date_seed = new Date(date_seed);
     var date_next = new Date(Math.min(date_now, new Date(date_seed.getFullYear(), date_seed.getMonth(), date_seed.getDate() + 10), date_now));
-        
+
 
     // Fill out the array of dates
     // with *now* being the upper limit / stopping condition
-    while(date_seed < date_now){
-        
+    while (date_seed < date_now) {
+
         dates.push([date_seed, date_next]);
         date_seed = date_next;
         date_next = new Date(Math.min(date_now, new Date(date_seed.getFullYear(), date_seed.getMonth(), date_seed.getDate() + 10), date_now));
-        
+
     }
-    
+
     // 
     // STEP 2.) RUN A LOOP TO GET DATA FROM THE SERVER AND STORE IT SOMEWHERE
     // --------------------------------------------------------------------------
@@ -184,8 +184,8 @@ function main(){
     // and store it in our global 'all_events' array for use
     // later
     //
-    async function data_getter(){
-        
+    async function data_getter() {
+
         //
         // Loop and pull all event data
         // out of the tadpoles servers
@@ -195,8 +195,8 @@ function main(){
             //
             // This is what was returned (assuming no errors)
             //
-            const data = await get_data(dates[idx][0],dates[idx][1])();
-            
+            const data = await get_data(dates[idx][0], dates[idx][1])();
+
             //
             // Let the user know where we are...
             // and how many results were returned...
@@ -204,7 +204,7 @@ function main(){
             var para = document.createElement("p");
             para.innerText = new Date(_date[0]).toDateString() + " : " + data.events.length + " records";
             document.querySelector("#status").prepend(para);
-            
+
             //
             // Store the data
             //
@@ -212,13 +212,13 @@ function main(){
 
         }
 
-        return new Promise((res, rej) => {res(true)})
+        return new Promise((res, rej) => { res(true) })
 
     }
-    
-    
-    
-    
+
+
+
+
     // 
     // STEP 3.) DUMP ALL OF OUR DATA ONTO THE USER'S SYSTEM FOR POSTERITY
     // --------------------------------------------------------------------------
@@ -226,26 +226,26 @@ function main(){
     // and store it in our global 'all_events' array for use
     // later
     //
-    async function data_dump(){
+    async function data_dump() {
         //
         // and store the data as a JSON on the user's system, for fun...
         //
-        var blob = new Blob([JSON.stringify(document.all_events,null,"\t")], {"type": "text/json;charset=utf8;"});
+        var blob = new Blob([JSON.stringify(document.all_events, null, "\t")], { "type": "text/json;charset=utf8;" });
         var link;
-        
+
         link = document.createElement("a");
         link.setAttribute("href", window.URL.createObjectURL(blob));
         link.setAttribute("download", "primrose.json");
         link.click();
-        
-        return new Promise((res, rej) => {res(true)})
-        
+
+        return new Promise((res, rej) => { res(true) })
+
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     // 
     // STEP 4.) FIND EVENTS WITH MEDIA AND DOWNLOAD THEM...
     // --------------------------------------------------------------------------
@@ -253,7 +253,7 @@ function main(){
     // fake link, force the browser to click it, then wait for 3 seconds to download
     // all events with attachments
     //
-    async function media_getter(){
+    async function media_getter() {
         //
         // Keep users in the loop about what's going on...
         //
@@ -261,9 +261,9 @@ function main(){
         //
         // In the 'all_events' array, look for objects where the attachment attr is not empty
         //
-        document.all_media = document.all_events.filter(function(x){return x.attachments.length > 0});
-        
-        
+        document.all_media = document.all_events.filter(function (x) { return x.attachments.length > 0 });
+
+
         //
         // Loop and click synthetic links
         // to download media...
@@ -273,13 +273,15 @@ function main(){
             //
             // Build / Click link
             //
-            const data = await get_media(media.key, media.attachments[0]);
-            
-            //
-            // Wait for 3 seconds
-            //
-            await new Promise((resolve) => setTimeout(resolve,3000));
-            
+            console.log("Media Mime Type " + media.new_attachments[0].mime_type);
+            if ((media.new_attachments[0].mime_type == "image/jpeg" || media.new_attachments[0].mime_type == "video/mp4") && media.category != "ChildrensBook") {
+                const data = await get_media(media.key, media.attachments[0]);
+
+                //
+                // Wait for 3 seconds
+                //
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+            }
             //
             // Let the user know where we are...
             // and how many results were returned...
@@ -290,18 +292,18 @@ function main(){
 
 
         }
-        
+
         document.querySelector("body").innerHTML = "<h1>DONE!</h1>"
-        
-        return new Promise((res, rej) => {res(true)});
-        
+
+        return new Promise((res, rej) => { res(true) });
+
     }
 
 
-    
+
     data_getter()
-    .then(data_dump)
-    .then(media_getter);
+        .then(data_dump)
+        .then(media_getter);
 }
 
 
